@@ -1,10 +1,10 @@
 <?php
 
-use think\Env;
+// use think\Env;
 
 return [
 
-    'app_status'       => Env::get('status', 'dev'),
+    'app_status'       => 'dev',
     'url_route_on'     => true,
     'url_route_must'   => false,
     //'auto_bind_module' => true

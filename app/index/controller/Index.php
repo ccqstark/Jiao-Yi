@@ -9,7 +9,7 @@ class Index extends Controller
 {
     public function Index()
     {   
-       
+       return 'JiaoYi';
 	}
 
 }
