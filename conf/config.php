@@ -4,7 +4,7 @@
 
 return [
 
-    'app_status'       => 'dev',
+    'app_status'       => 'aliyun',
     'url_route_on'     => true,
     'url_route_must'   => false,
     //'auto_bind_module' => true
