@@ -23,7 +23,7 @@ class Commodity extends Controller{
         $location = $res['location'];
         $contact = $res['contact'];
 
-        $commodityInfo = new model\CommodityInfo;
+        $commodityInfo = new model\CommodityBaseInfo;
         $result = $commodityInfo->commodityInsert($title,$description,$price,$location,$contact);
 
         if($result){
@@ -42,13 +42,48 @@ class Commodity extends Controller{
 
 
     //首页展示最新帖子
-    public function browse(){
+    public function browseFirst(){
 
+        $commodityModel = new model\CommodityBaseInfo;
+        $data = $commodityModel->getFirstPage();
+        
+        return json($data);
+    }
 
+    //下一页
+    public function browseNext(){
 
+        $commodityModel = new model\CommodityBaseInfo;
+        $data = $commodityModel->getNextPage();
+        
+        return json($data);
+    }
 
+    public function detail(Request $request){
+
+        $res = $request->post();
+        $commodity_id = $res['commodity_id'];
+
+        $commodityModel = new model\CommodityBaseInfo;
+        $target_commodity = $commodityModel->getDetail($commodity_id);
+
+        if(!$target_commodity){  //查无此商品
+            return json([
+                'resultCode' => 0,
+                'msg' => 'commodity not found'
+            ]);
+        }else{
+            return json([
+                'resultCode' => 1,
+                'commodity' => $target_commodity,
+                'msg' => 'success'  
+            ]);
+        }
 
     }
+
+
+
 
 
 

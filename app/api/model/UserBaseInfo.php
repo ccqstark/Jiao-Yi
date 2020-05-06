@@ -3,6 +3,7 @@ namespace app\api\model;
 use think\Model;
 use think\Db;
 
+Db::connect();
 class UserBaseInfo extends Model{
     //登录
     public function LoginByUsername($username,$password){
