@@ -64,7 +64,7 @@ class Whisper extends Controller{
         $whisper_id = $res['whisper_id'];
 
         $WhisperModel = new model\WhisperMainbody;
-        $data = $WhisperModel->getComment();
+        $data = $WhisperModel->getComment($whisper_id);
 
         if($data){
             return json([

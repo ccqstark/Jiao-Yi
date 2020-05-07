@@ -14,7 +14,8 @@ class WhisperMainbody extends Model{
         $db = Db::table('whisper_mainbody');
         $result = $db->insert([
             'whisper_author_id' => $author_id,
-            'whisper_content'   => $content
+            'whisper_content'   => $content,
+            'like' => 0
         ]);
         
         return $result;
@@ -59,7 +60,7 @@ class WhisperMainbody extends Model{
 
         $db = Db::table('whisper_comment');
         $result = $db->insert([
-                'whisper__id'=>$whisper_id,
+                'whisper_id'=>$whisper_id,
                 'comment_content'=>$content
             ]);
 

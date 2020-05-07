@@ -47,7 +47,7 @@ class UserBaseInfo extends Model{
     public function getIdByEmail($email){
 
         $db = Db::table('user_base_info');
-        $thisUser = $db->whrere(['email'=>$email])->find();
+        $thisUser = $db->where(['email'=>$email])->find();
 
         if(!$thisUser){
             return 0;   //不存在
@@ -60,7 +60,7 @@ class UserBaseInfo extends Model{
     public function getIdByUsername($username){
 
         $db = Db::table('user_base_info');
-        $thisUser = $db->whrere(['user_name' => $username])->find();
+        $thisUser = $db->where(['user_name' => $username])->find();
 
         if(!$thisUser){
             return 0;   //不存在

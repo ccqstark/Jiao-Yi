@@ -33,7 +33,7 @@ class Login extends Controller{
             $result = $userInfo->LoginByEmail($useridentity,$password);
             //记录当前登录的user_id
             if($result==1){
-                $user_id = $userInfo->getIdByEmail();
+                $user_id = $userInfo->getIdByEmail($useridentity);
                 Session::set('user_id',$user_id);
             }
 
@@ -41,7 +41,7 @@ class Login extends Controller{
             $result = $userInfo->LoginByUsername($useridentity,$password);
             //记录当前登录的user_id
             if($result==1){
-                $user_id = $userInfo->getIdByUsername();
+                $user_id = $userInfo->getIdByUsername($useridentity);
                 Session::set('user_id',$user_id);
             }
         }
