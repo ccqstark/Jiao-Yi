@@ -9,11 +9,12 @@ Db::connect();
 class CommodityBaseInfo extends Model{
     
     //插入新发布的商品帖子
-    public function commodityInsert($title,$description,$price,$location,$contact){
+    public function commodityInsert($author_id, $title, $description, $price, $location, $contact){
         $db1 = Db::table('commodity_base_info');
         $db2 = Db::table('commodity_detail');
 
         $result1 = $db1->insert([
+                'commodity_author_id'=>$author_id,
                 'commodity_title'    => $title,
                 'commodity_price'    => $price,
                 'commodity_location' => $location
@@ -36,19 +37,19 @@ class CommodityBaseInfo extends Model{
         $db = Db::table('commodity_base_info');
         //分页，倒序
         $data = $db->page(1,PERPAGE)->order('commodity_id desc')->select();
-        Session::set('page',1);
+        Session::set('commodity_page',1);
+        
         return $data;
-
     }
 
     //获取下一页，每次调用返回5条数据
     public function getNextPage(){
 
         $db = Db::table('commodity_base_info');
-        $page = Session::get('page') + 1;
+        $page = Session::get('commodity_page') + 1;
         //分页，倒序
         $data = $db->page($page,PERPAGE)->order('commodity_id desc')->select();
-        Session::set('page',$page);
+        Session::set('commodity_page',$page);
 
         return $data;
     }

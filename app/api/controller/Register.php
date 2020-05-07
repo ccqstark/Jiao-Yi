@@ -6,11 +6,10 @@ use app\api\model;
 use app\api\validate;
 use app\api\controller\Mailer;
 use think\Session;
-
+//CORS跨域
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: token, Origin, X-Requested-With, Content-Type, Accept, Authorization");
 header('Access-Control-Allow-Methods: POST,GET,PUT,DELETE');
-
 if(request()->isOptions()){
     exit();
 }
@@ -36,13 +35,23 @@ class Register extends Controller{
         
         //用户名已被注册
         $userInfo = new model\UserBaseInfo;
-        $exist = $userInfo->findUserExist($username);
+        $exist = $userInfo->findUserExistByName($username);
         if($exist){
             return json([
                 'resultCode' => -1,
                 'msg' => '此用户名已被注册'
             ]);
         }
+
+        //邮箱已被注册
+        $exist = $userInfo->findUserExistByEmail($email);
+        if($exist){
+            return json([
+                'resultCode' => -1,
+                'msg' => '此邮箱已被注册'
+            ]);
+        }
+
         
         //存入session
         Session::set('username',$username);
@@ -68,15 +77,17 @@ class Register extends Controller{
         $res = $request->post();
         $userVercode = $res['vercode'];
         $vercode = Session::get('vercode');
-    
+        //验证成功
         if($vercode==$userVercode){
             $username = Session::get('username');
             $email    = Session::get('email');
             $password = Session::get('password');
             //插入数据库
             $userInfo = new model\UserBaseInfo;
-            $userInfo->toRegister($username,$email,$password); 
-
+            $new_id = $userInfo->toRegister($username,$email,$password); 
+            //记录当前登录的id
+            Session::set('user_id',$new_id);
+            
             return json([
                 'resultCode' => 1,
                 'msg'  => 'success'  //验证码成功并且插入数据库

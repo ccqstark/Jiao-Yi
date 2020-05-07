@@ -10,7 +10,6 @@ use think\Session;
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: token, Origin, X-Requested-With, Content-Type, Accept, Authorization");
 header('Access-Control-Allow-Methods: POST,GET,PUT,DELETE');
-
 if(request()->isOptions()){
     exit();
 }
@@ -32,24 +31,36 @@ class Login extends Controller{
         $userInfo = new model\UserBaseInfo;
         if($vali_result){  //邮箱登录
             $result = $userInfo->LoginByEmail($useridentity,$password);
+            //记录当前登录的user_id
+            if($result==1){
+                $user_id = $userInfo->getIdByEmail();
+                Session::set('user_id',$user_id);
+            }
 
         }else{ //用户名登录  
             $result = $userInfo->LoginByUsername($useridentity,$password);
+            //记录当前登录的user_id
+            if($result==1){
+                $user_id = $userInfo->getIdByUsername();
+                Session::set('user_id',$user_id);
+            }
         }
 
         
         switch ($result)
         {
             case 0:
+                //用户不存在
                 return json(['resultCode' => 0,
                                     'msg' => 'user not found']);
                 break;
             case -1:
+                //密码错误
                 return json(['resultCode' => -1,
                                     'msg' => 'psw wrong']);
                 break;
             case 1:
-                Session::set('useridentity',$useridentity);
+                //登录成功
                 return json(['resultCode' => 1,
                                     'msg' => 'success']);
                 break;

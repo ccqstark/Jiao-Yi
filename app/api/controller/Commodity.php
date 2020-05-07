@@ -4,11 +4,10 @@ use think\Controller;
 use think\Request;
 use app\api\model;
 use think\Session;
-
+//CORS跨域
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: token, Origin, X-Requested-With, Content-Type, Accept, Authorization");
 header('Access-Control-Allow-Methods: POST,GET,PUT,DELETE');
-
 if(request()->isOptions()){
     exit();
 }
@@ -17,14 +16,16 @@ class Commodity extends Controller{
     //发布商品帖子
     public function post(Request $request){
         $res = $request->post();
+        $author_id = Session::get('user_id'); //当前用户
         $title = $res['title'];
         $description = $res['description'];
         $price = $res['price'];
         $location = $res['location'];
         $contact = $res['contact'];
-
+        //插入数据库
         $commodityInfo = new model\CommodityBaseInfo;
-        $result = $commodityInfo->commodityInsert($title,$description,$price,$location,$contact);
+        $result = $commodityInfo->commodityInsert($author_id, $title, $description, 
+                                                        $price, $location, $contact);
 
         if($result){
             return json([
