@@ -14,17 +14,17 @@ if(request()->isOptions()){
     exit();
 }
 
-class Share extends Controller{
+class Focus extends Controller{
 
-    //发布微享
-    public function post(Request $request){
+    //添加关注
+    public function follow(Request $request){
 
         $res = $request->post();
-        $author_id = Session::get('user_id');
-        $share_content = $res['connent'];
+        $user_id = Session::get('user_id');
+        $focus_id = $res['focus_id'];
 
-        $shareModel = new model\MicroShare;
-        $result = $shareModel->postNew($author_id,$share_content);
+        $focusModel = new model\UserFollow;
+        $result = $focusModel->addFollow($user_id, $focus_id);
 
         if($result){
             return json([
@@ -36,19 +36,8 @@ class Share extends Controller{
                 'resultCode' => 0,
                 'msg' => 'failed'
             ]);
-        }     
+        }
     }
-
-    
-    public function browseFirst(){
-
-
-
-
-
-    }
-
-
 
 
 
