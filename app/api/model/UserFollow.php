@@ -44,16 +44,69 @@ class UserFollow extends Model{
 
         //转为数组求交集
         $eachOther = array_intersect($my_focus,$my_fans);
-        //删除0
+        //去掉占位符0
         array_shift($eachOther);
-        //转为int
-        $len = sizeof($eachOther);
-        for($x = 0;$x<$len;$x++){
-            $eachOther[$x] = (int)$eachOther[$x];
-        } 
         
-        return $eachOther;
+        $len = sizeof($eachOther);
+        if($len == 0){  //无互相关注
+            return 0;
+        }else{
+            //转为int
+            for($x = 0;$x<$len;$x++){
+                $eachOther[$x] = (int)$eachOther[$x];
+            } 
+            return $eachOther;
+        }
+        
     }
+
+
+    //获取我的关注
+    public function getFocusId($user_id){
+
+        $db = Db::table('user_follow');
+        $thisUser = $db->where(['user_id'=>$user_id])->find();
+        $my_focus = $thisUser['focus_list'];
+        $my_focus = explode(',', $my_focus); //转为数组
+
+        array_shift($my_focus); //去0
+        $len = sizeof($my_focus);
+
+        if($len==0){ //无关注
+            return 0; 
+        }else{
+            //转为int
+            for($x = 0;$x<$len;$x++){
+                $my_focus[$x] = (int)$my_focus[$x];
+            } 
+            return $my_focus;
+        }   
+    }
+
+    //获取我的粉丝
+    public function getFansId($user_id){
+
+        $db = Db::table('user_follow');
+        $thisUser = $db->where(['user_id'=>$user_id])->find();
+        $my_fans = $thisUser['fans_list'];
+        $my_focus = explode(',', $my_fans); //转为数组
+
+        array_shift($my_fans); //去0
+        $len = sizeof($my_fans);
+
+        if($len==0){ //无粉丝
+            return 0; 
+        }else{
+            //转为int
+            for($x = 0;$x<$len;$x++){
+                $my_fans[$x] = (int)$my_fans[$x];
+            } 
+            return $my_fans;
+        }  
+    }
+
+
+
 
 
 }

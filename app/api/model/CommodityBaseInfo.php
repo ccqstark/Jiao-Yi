@@ -14,7 +14,7 @@ class CommodityBaseInfo extends Model{
         $db2 = Db::table('commodity_detail');
 
         $result1 = $db1->insert([
-                'commodity_author_id'=>$author_id,
+                'commodity_author_id'=> $author_id,
                 'commodity_title'    => $title,
                 'commodity_price'    => $price,
                 'commodity_location' => $location

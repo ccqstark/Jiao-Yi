@@ -139,6 +139,17 @@ class UserBaseInfo extends Model{
 
     }
 
+    public function getFollowName($id_data){
+
+        $name_array = array();
+        foreach($id_data as $id){
+            $thisUser = Db::table('user_base_info')->where(['user_id'=>$id])->find();
+            $nameOfUser = $thisUser['user_name'];
+            array_push($name_array,$nameOfUser);
+        }
+
+        return $name_array;
+    }
 
 
 

@@ -39,18 +39,45 @@ class Share extends Controller{
         }     
     }
 
-    
+    //微享内容查看含有权限分级
+    //微享第一页
     public function browseFirst(){
+        
+        $shareModel = new model\MicroShare;
+        $data = $shareModel->getFirstPage();
 
-
-
-
-
+        if(!$data){ //无内容
+            return json([
+                'resultCode' => 0,
+                'msg' => 'no content'
+            ]);
+        }else{  //有内容
+            return json([
+                'resultCode' => 1,
+                'data' => $data
+            ]);
+        }
     }
 
 
+    //微享下一页
+    public function browseNext(){
 
+        $shareModel = new model\MicroShare;
+        $data = $shareModel->getNextPage();
 
+        if(!$data){ //无内容
+            return json([
+                'resultCode'=>0,
+                'msg' => 'no content'
+            ]);
+        }else{  //有内容
+            return json([
+                'resultCode' => 1,
+                'data' => $data
+            ]);
+        }     
+    }
 
 
 
