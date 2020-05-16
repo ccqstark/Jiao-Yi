@@ -3,6 +3,7 @@ namespace app\api\model;
 use think\Model;
 use think\Db;
 use think\Session;
+use think\cache\driver\Redis;
 define('PERPAGE',2); //每页帖子数
 
 Db::connect();
@@ -67,5 +68,56 @@ class CommodityBaseInfo extends Model{
     }
 
 
+    //获取收藏商品、我发布的商品
+    public static function getMyCommodity($id_data,$commodityType){
+
+        $commodity_array = array();
+        foreach($id_data as $id){
+            $thisCommodity = Db::table('commodity_base_info')->where(['commodity_id'=>$id])->find();
+            array_push($commodity_array,$thisCommodity);
+        }
+    
+        //倒序排序
+        array_multisort(array_column($commodity_array,'commodity_id') ,SORT_DESC, $commodity_array);
+
+        //redis缓存
+        $redis = new Redis();
+        switch($commodityType)
+        {
+            case 0:
+                $redis->set('my_favo'.$user_id, $commodity_array);
+                break;
+            case 1:
+                $redis->set('my_commodity'.$user_id, $commodity_array);
+                break;
+        }
+        
+        return $commodity_array;
+    }
+
+
+    //收藏此帖子
+    public function addFavo($new_favo){ 
+
+        $user_id = Session::get('user_id');
+        $userExpand =  Db::table('user_expand')->where(['user_id'=>$user_id])->find();
+        $favo_list = $userExpand['my_favorite'];    
+        $favo_list = explode(',', $favo_list); //转为数组
+        array_push($favo_list,$new_favo); //向数组添加新元素
+        $favo_list = implode(',', $favo_list); //转回字符串
+        //添加到我的收藏
+        $result1 = Db::table('user_expand')
+                    ->where(['user_id'=>$user_id])
+                    ->update(['my_favorite'=>$favo_list]);
+        //商品收藏数+1
+        $result2 = Db::table('commodity_detail')
+                    ->where(['commodity_id'=>$new_favo])
+                    ->setInc('like',1);
+       
+        return $result1+$result2;
+    }
+
+
+    
 
 }

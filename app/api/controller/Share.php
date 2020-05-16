@@ -80,7 +80,53 @@ class Share extends Controller{
     }
 
 
+    //查看微享的评论
+    public function viewComment(Request $request){
 
+        $res = $request->post();
+        $share_id = $res['share_id'];
+
+        $shareModel = new model\MicroShare;
+        $data = $shareModel->getComment($share_id);
+
+        if($data){
+            return json([
+                'resultCode' => 1, 
+                'data' => $data,
+                'msg'  => 'success'
+            ]);
+        }else{
+            return json([
+            'resultCode' => 0,
+            'msg' => 'no data'
+            ]);
+        }
+    }
+
+    //发表评论
+    public function comment(Request $request){
+
+        $res = $request->post();
+        $share_id = $res['share_id'];
+        $comment_content = $res['content'];
+
+        $shareModel = new model\MicroShare;
+        $result = $shareModel->addComment($share_id, $comment_content);
+
+        if($result){
+            return json([
+                'resultCode' => 1,
+                'msg' => 'success'
+            ]);
+        }else{
+            return json([
+                'resultCode' => 0,
+                'msg' => 'failed'
+            ]);
+        }
+    }
+
+    
 
 
 

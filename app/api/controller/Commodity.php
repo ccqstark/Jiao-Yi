@@ -83,8 +83,29 @@ class Commodity extends Controller{
 
     }
 
-    //TODO:收藏、点赞
+    //收藏、点赞
+    public function likeIt(Request $request){
 
+        $res = $request->post();
+        $new_like = $res['commodity_id'];
+
+        $likeModel = new model\CommodityBaseInfo;
+        $result = $likeModel->addFavo($new_like);
+
+        if(!$result){
+            return json([
+                'resultCode'=>0,
+                'msg' => 'failed'
+            ]);
+        }else{
+            return json([
+                'resultCode'=>1,
+                'msg' => 'success'
+            ]);
+        }
+    }
+
+    
 
 
 

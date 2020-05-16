@@ -9,7 +9,8 @@ class Index extends Controller
 {
     public function Index()
     {   
-       return 'JiaoYi';//TODO:I want to test sublime merge to push
+       //return 'JiaoYi';//TODO:I want to test sublime merge to push
+       phpinfo();
 	}
 
 }

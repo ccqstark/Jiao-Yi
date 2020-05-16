@@ -79,7 +79,7 @@ class MicroShare extends Model{
 
             //总内容只有一页
             if($total<=PERPAGE){
-                Session::set('sharePage',0);
+                Session::set('sharePage'.$user_id,0);
                 return $share;
             }
             //内容大于一页时
@@ -89,7 +89,7 @@ class MicroShare extends Model{
                     array_push($page_data,$share[$i]);
                 }
                 //记录下一页开始的记录的下标
-                Session::set('sharePage',PERPAGE);
+                Session::set('sharePage'.$user_id,PERPAGE);
 
                 return $page_data;
             }
@@ -99,7 +99,7 @@ class MicroShare extends Model{
     //微享下一页
     public function getNextPage(){
     
-        $now_page = Session::get('sharePage');
+        $now_page = Session::get('sharePage'.$user_id);
         if($now_page==0){ //没有内容了
             return 0;
         }
@@ -118,7 +118,7 @@ class MicroShare extends Model{
                 for($i = 0;$i<rest;$i++){
                     array_push($page_data,$share[$now_page+$i]);
                 }
-                Session::set('sharePage',0); //置0
+                Session::set('sharePage'.$user_id,0); //置0
                 
                 return $page_data;
             }
@@ -127,16 +127,58 @@ class MicroShare extends Model{
                 for($i = 0;$i<PERPAGE;$i++){
                     array_push($page_data,$share[$now_page+$i]);
                 }
-                Session::set('sharePage',$now_page+PERPAGE);
+                Session::set('sharePage'.$user_id, $now_page+PERPAGE);
                 
                 return $page_data;
             }
         }
     }
 
+    //获取我发布的微享
+    public static function getMyShare($id_data){
+
+        $share_array = array();
+        foreach($id_data as $id){
+            $thisShare = Db::table('micro_share')->where(['share_id'=>$id])->find();
+            array_push($share_array,$thisShare);
+        }
+    
+        //倒序排序
+        array_multisort(array_column($share_array,'whisper_id') ,SORT_DESC, $share_array);
+
+        //redis缓存
+        $redis = new Redis();
+        $redis->set('my_share'.$user_id, $share_array);
+    
+        return $share_array;
+    }
 
 
+     //获取评论
+     public function getComment($share_id){
 
+        $db = Db::table('share_comment');
+        $data = $db->where(['share_id' => $share_id])->select();
+
+        return $data;
+    }
+
+    //新增评论
+    public function addComment($share_id, $content){
+
+        $user_id = Session::get($user_id);
+        $thisUser = Db::table('user_base_info')->where(['user_id'=>$user_id])->find();
+        $user_name = $thisUser['user_name'];
+
+        $result = Db::table('share_comment')
+                    ->insert([
+                    'share_id'=>$share_id,
+                    'comment_user_name'=>$user_name,
+                    'comment_content'=>$content
+                ]);
+
+        return $result;
+    }
 
 
 

@@ -64,6 +64,54 @@ class User extends Controller{
         }
     }
 
+    //扩展信息第一页
+    public function expandFirstPage(Requset $requset){
+        
+        $res = $requset->post();
+        $dataType = $res['dataType'];
+
+        $expandModel = new model\UserExpand;
+        $data = $expandModel->getExpandFirstPage($dataType);
+
+        if(!$data){
+            return json([
+                'resultCode' => 0,
+                'msg' => 'no data'
+            ]);
+        }else{
+            return json([
+                'resultCode' => 1,
+                'data' => $data,
+                'msg'  => 'success'
+            ]);
+        }
+    }
+
+    //扩展信息下一页
+    public function expandNextPage(Requset $requset){
+
+        $res = $requset->post();
+        $dataType = $res['dataType'];
+
+        $expandModel = new model\UserExpand;
+        $data = $expandModel->getExpandNextPage($dataType);
+
+        if(!$data){
+            return json([
+                'resultCode' => 0,
+                'msg' => 'no data'
+            ]);
+        }else{
+            return json([
+                'resultCode' => 1,
+                'data' => $data,
+                'msg'  => 'success'
+            ]);
+        }
+    }
+
+  
+
 
 
 

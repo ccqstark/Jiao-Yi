@@ -139,6 +139,7 @@ class UserBaseInfo extends Model{
 
     }
 
+    //用id获取用户名
     public function getFollowName($id_data){
 
         $name_array = array();

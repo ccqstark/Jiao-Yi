@@ -3,6 +3,7 @@ namespace app\api\model;
 use think\Model;
 use think\Db;
 use think\Session;
+use think\cache\driver\Redis;
 define('PERPAGE',2); //每页帖子数
 
 Db::connect();
@@ -65,6 +66,25 @@ class WhisperMainbody extends Model{
             ]);
 
         return $result;
+    }
+
+    //获取我的悄悄话
+    public static function getMyWhisper($id_data){
+
+        $whisper_array = array();
+        foreach($id_data as $id){
+            $thisWhisper = Db::table('whisper_mainbody')->where(['whisper_id'=>$id])->find();
+            array_push($whisper_array,$thisWhisper);
+        }
+    
+        //倒序排序
+        array_multisort(array_column($whisper_array,'whisper_id') ,SORT_DESC, $whisper_array);
+
+        //redis缓存
+        $redis = new Redis();
+        $redis->set('my_whisper'.$user_id, $whisper_array);
+    
+        return $whisper_array;
     }
 
 
