@@ -11,12 +11,24 @@ header('Access-Control-Allow-Methods: POST,GET,PUT,DELETE');
 if(request()->isOptions()){
     exit();
 }
+//防XSS
+// ini_set("session.cookie_httponly", 1);
 
 class Commodity extends Controller{
     //发布商品帖子
     public function post(Request $request){
         $res = $request->post();
         $author_id = Session::get('user_id'); //当前用户
+        $token_v = $res['token'];
+        //token验证,防CSRF
+        $token = model\Token::getToken($author_id);
+        if($token_v != $token){
+            return json([
+                'resultCode' => -100,
+                'msg' => 'invalid token'
+            ]);
+        }
+
         $title = $res['title'];
         $description = $res['description'];
         $price = $res['price'];

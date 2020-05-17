@@ -11,6 +11,8 @@ header('Access-Control-Allow-Methods: POST,GET,PUT,DELETE');
 if(request()->isOptions()){
     exit();
 }
+//防XSS
+// ini_set("session.cookie_httponly", 1);
 
 class Search extends Controller{
 

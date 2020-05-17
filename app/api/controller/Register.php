@@ -13,7 +13,8 @@ header('Access-Control-Allow-Methods: POST,GET,PUT,DELETE');
 if(request()->isOptions()){
     exit();
 }
-
+//防XSS
+// ini_set("session.cookie_httponly", 1);
 
 class Register extends Controller{
     //注册验证码
@@ -87,7 +88,9 @@ class Register extends Controller{
             $new_id = $userInfo->toRegister($username,$email,$password); 
             //记录当前登录的id
             Session::set('user_id',$new_id);
-            
+            //token
+            model\Token::generateToken($username,$password);
+
             return json([
                 'resultCode' => 1,
                 'msg'  => 'success'  //验证码成功并且插入数据库

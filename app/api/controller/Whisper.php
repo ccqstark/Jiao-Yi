@@ -13,6 +13,8 @@ header('Access-Control-Allow-Methods: POST,GET,PUT,DELETE');
 if(request()->isOptions()){
     exit();
 }
+//防XSS
+// ini_set("session.cookie_httponly", 1);
 
 class Whisper extends Controller{
 
@@ -22,6 +24,15 @@ class Whisper extends Controller{
         $res = $request->post();
         $author_id = Session::get('user_id');
         $whisper_content = $res['content'];
+        $token_v = $res['token'];
+        //token验证,防CSRF
+        $token = model\Token::getToken($author_id);
+        if($token_v != $token){
+            return json([
+                'resultCode' => -100,
+                'msg' => 'invalid token'
+            ]);
+        }
 
         $WhisperModel = new model\WhisperMainbody;
         $result = $WhisperModel->insertNew($author_id, $whisper_content);

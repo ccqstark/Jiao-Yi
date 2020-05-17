@@ -13,7 +13,8 @@ header('Access-Control-Allow-Methods: POST,GET,PUT,DELETE');
 if(request()->isOptions()){
     exit();
 }
-
+//防XSS
+// ini_set("session.cookie_httponly", 1);
 
 class Login extends Controller{
 
@@ -60,7 +61,8 @@ class Login extends Controller{
                                     'msg' => 'psw wrong']);
                 break;
             case 1:
-                //登录成功
+                //登录成功,设置token
+                model\Token::generateToken($useridentity,$password);
                 return json(['resultCode' => 1,
                                     'msg' => 'success']);
                 break;
