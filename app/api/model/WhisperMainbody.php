@@ -13,13 +13,23 @@ class WhisperMainbody extends Model{
     public function insertNew($author_id, $content){
 
         $db = Db::table('whisper_mainbody');
-        $result = $db->insert([
+        $result1 = $db->insertGetId([
             'whisper_author_id' => $author_id,
             'whisper_content'   => $content,
             'like' => 0
         ]);
+
+        //FIXME:新发布更新expand表
+        $userExpand =  Db::table('user_expand')->where(['user_id'=>$author_id])->find();
+        $whisper_list = $userExpand['my_whisper'];    
+        $whisper_list = explode(',', $whisper_list); //转为数组
+        array_push($whisper_list,$result1); //向数组添加新元素
+        $whisper_list = implode(',', $whisper_list); //转回字符串
+        $result2 = Db::table('user_expand')
+                    ->where(['user_id'=>$author_id])
+                    ->update(['my_whisper'=>$whisper_list]);
         
-        return $result;
+        return $result1+$result2;
     }
 
 

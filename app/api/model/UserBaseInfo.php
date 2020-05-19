@@ -99,14 +99,22 @@ class UserBaseInfo extends Model{
 
     //注册成功，插入数据库
     public function toRegister($username,$email,$password){
-        $db = Db::table('user_base_info');
+      
         $password = md5($password); //md5加密
 
-        $result_id = $db->insertGetId([
+        $result_id = Db::table('user_base_info')->insertGetId([
                     'user_name' => $username,
                     'email' => $email,
                     'user_password' => $password,
                 ]);
+        //FIXME:修复扩展信息初始化问题
+        Db::table('user_expand')->insert([
+            'user_id'=> $result_id,
+            'my_favorite'=> '0',
+            'my_commodity'=> '0',
+            'my_whisper'=> '0',
+            'my_share'=> '0'
+        ]);
         
         return $result_id;  //成功插入记录数1
 

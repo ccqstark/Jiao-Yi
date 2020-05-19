@@ -5,13 +5,12 @@ use think\Db;
 use app\api\model\VicWord;
 
 Db::connect();
-
 class SearchEngine extends Model{
 
     //分词（VicWord）
     public static function cutWord($phrase){
 
-        $word_array = model\VicWord\Cut::goCut($phrase);
+        $word_array = VicWord\Cut::goCut($phrase);
 
         return $word_array;
     }
@@ -19,7 +18,7 @@ class SearchEngine extends Model{
     //进行搜索（模糊查询）
     public function goSearch($keyWord){
 
-        $keyWord_array = self::cutWord($keyWord);
+        $keyWord_array = @self::cutWord($keyWord);
 
         $search_result = array();
 

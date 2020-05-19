@@ -14,7 +14,7 @@ class CommodityBaseInfo extends Model{
         $db1 = Db::table('commodity_base_info');
         $db2 = Db::table('commodity_detail');
 
-        $result1 = $db1->insert([
+        $result1 = $db1->insertGetId([
                 'commodity_author_id'=> $author_id,
                 'commodity_title'    => $title,
                 'commodity_price'    => $price,
@@ -25,12 +25,20 @@ class CommodityBaseInfo extends Model{
             'contact'               => $contact,
             'like'                  => 0
         ]);
+        //FIXME:新发布更新expand表
+        $userExpand =  Db::table('user_expand')->where(['user_id'=>$author_id])->find();
+        $commod_list = $userExpand['my_commodity'];    
+        $commod_list = explode(',', $commod_list); //转为数组
+        array_push($commod_list,$result1); //向数组添加新元素
+        $commod_list = implode(',', $commod_list); //转回字符串
+        $result3 = Db::table('user_expand')
+                    ->where(['user_id'=>$author_id])
+                    ->update(['my_commodity'=>$commod_list]);
 
-
-        $result = $result1+$result2;
+        $result = $result1+$result2+$result3;
         return $result;
-
     }
+
 
     //获取第一页，在首页第一次加载时调用
     public function getFirstPage(){

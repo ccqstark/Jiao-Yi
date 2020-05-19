@@ -14,12 +14,22 @@ class MicroShare extends Model{
     public function postNew($author_id, $content){
 
         $db = Db::table('micro_share');
-        $result = $db->indert([
+        $result1 = $db->indertGetId([
             'share_author_id' => $author_id,
             'share_content'   => $content
         ]);
 
-        return $result;
+        //FIXME:新发布更新expand表
+        $userExpand =  Db::table('user_expand')->where(['user_id'=>$author_id])->find();
+        $share_list = $userExpand['my_share'];    
+        $share_list = explode(',', $share_list); //转为数组
+        array_push($share_list,$result1); //向数组添加新元素
+        $share_list = implode(',', $share_list); //转回字符串
+        $result2 = Db::table('user_expand')
+                    ->where(['user_id'=>$author_id])
+                    ->update(['my_share'=>$share_list]);
+
+        return $result1+$result2;
     }
 
 
