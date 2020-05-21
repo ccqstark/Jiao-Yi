@@ -106,6 +106,7 @@ class UserBaseInfo extends Model{
                     'user_name' => $username,
                     'email' => $email,
                     'user_password' => $password,
+                    'profile'=>'0'
                 ]);
         //FIXME:修复扩展信息初始化问题
         Db::table('user_expand')->insert([
@@ -159,6 +160,33 @@ class UserBaseInfo extends Model{
 
         return $name_array;
     }
+
+    //上传头像
+    public function uploadProfile($path){
+
+        $user_id = Session::get('user_id');
+        $db = Db::table('user_base_info');
+        $result = $db->where(['user_id'=>$user_id])
+                     ->update(['profile'=>$path]);
+
+        return $result;
+    }
+
+
+    //通过id获取邮箱
+    public function getEmailById($user_id){
+
+        $db = Db::table('user_base_info');
+        $thisUser = $db->where(['user_id'=>$user_id])->find();
+
+        if(!$thisUser){
+            return 0;   //不存在
+        }else{
+            return $thisUser['email']; //存在
+        }
+    }
+
+
 
 
 

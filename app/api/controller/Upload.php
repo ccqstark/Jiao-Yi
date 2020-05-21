@@ -4,6 +4,7 @@ use think\Controller;
 use think\Request;
 use app\api\model;
 use think\Session;
+use think\File;
 //CORS跨域
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: token, Origin, X-Requested-With, Content-Type, Accept, Authorization");
@@ -16,39 +17,88 @@ if(request()->isOptions()){
 
 class Upload extends Controller{
 
-    public function image(Requset $requset){
+    //头像
+    public function profile(){
 
-        // 获取表单上传文件 例如上传了001.jpg
+        // 获取表单上传文件
         $file = request()->file('images');
-    
-        // 移动到框架应用根目录/public/uploads/ 目录下
+            
         if($file){
-            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
-            if($info){
-                // 成功上传后 获取上传信息
-                // 输出 jpg
-                // echo $info->getExtension();
-                // // 输出 20160820/42a79759f284b767dfcb2a0197904287.jpg
-                // echo $info->getSaveName();
-                // // 输出 42a79759f284b767dfcb2a0197904287.jpg
-                // echo $info->getFilename(); 
-                return json([
-                    'resultCode'=> 1,
-                    'msg'=>'good job!'
-                ]);
+            // 移动到框架应用根目录/public/uploads/ 目录下
+            $path = ROOT_PATH . 'public' . DS . 'uploads';
+            $info = $file->rule('md5')->move($path);
+
+            if($info){//上传成功
+            
+                //获取存储路径（日期目录+图片命名.后缀）
+                $image_path = $info->getSaveName();
+                //存入数据库
+                $userModel = new model\UserBaseInfo;
+                $result = $userModel->uploadProfile($image_path);
+                if($result){
+                    return([
+                        'resultCode'=>1,
+                        'msg'=> 'success'
+                    ]);
+                }else{
+                    return([
+                        'resultCode'=>0,
+                        'msg'=> 'failed'
+                    ]);
+                }
+
             }else{
+                $error = $file->getError();
                 // 上传失败获取错误信息
-                $error =  $file->getError();
-                return json([
-                    'resultCode'=> 0,
-                    'msg'=>$error
-                ]);
+                return([
+                    'resultCode'=>0,
+                    'msg'=> $error
+                ]);            
             }
-        }
-
-
+        }        
     }
 
+
+    //商品图片
+    public function commodityImage(){
+
+        // 获取表单上传文件
+        $file = request()->file('images');
+        $commodity_id = Session::get('new_commodity');   
+        if($file){
+            // 移动到框架应用根目录/public/uploads/ 目录下
+            $path = ROOT_PATH . 'public' . DS . 'uploads';
+            $info = $file->rule('md5')->move($path);
+    
+            if($info){//上传成功
+               
+                //获取存储路径（日期目录+图片命名.后缀）
+                $image_path = $info->getSaveName();
+                //存入数据库
+                $commodeityModel = new model\CommodityBaseInfo;
+                $ressult = $commodeityModel->uploadImage($commodity_id,$image_path);
+                if($result){
+                    return([
+                        'resultCode'=>1,
+                        'msg'=> 'success'
+                    ]);
+                }else{
+                    return([
+                        'resultCode'=>0,
+                        'msg'=> 'failed'
+                    ]);
+                }   
+    
+            }else{
+                $error = $file->getError();
+                // 上传失败获取错误信息
+                return([
+                    'resultCode'=>0,
+                    'msg'=> $error
+                ]);            
+            }
+        }       
+    }
 
 
 

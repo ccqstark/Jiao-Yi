@@ -22,6 +22,15 @@ class Mailer extends Controller{
         可不用妥善保存，可以随意丢弃删除，甚至可以告诉他人(狗头)。'); 
         
     }
+
+    public static function chatNoticfication($address,$chat){
+
+        //发出
+        self::sendMail("$address", '有人在蕉忆上cue你', 
+        '有小哥哥/小姐姐来撩你了，快去蕉忆上回复他/她！
+        打开浏览器访问: '.$chat); 
+        
+    }
      
      
     //发邮件所需函数

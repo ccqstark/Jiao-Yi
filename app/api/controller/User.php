@@ -4,6 +4,7 @@ use think\Controller;
 use think\Request;
 use app\api\model;
 use app\api\validate;
+use app\api\controller\Mailer;
 use think\Session;
 //CORS跨域
 header('Access-Control-Allow-Origin: *');
@@ -110,8 +111,41 @@ class User extends Controller{
         }
     }
 
-  
+    public function  getIdToChat(Request $request){
 
+        $res = $requset->post();
+        $username = $res['username'];
+
+        $userModel = new model\UserBaseInfo;
+        $id = $userModel->getIdByUsername($username);
+        if($id){
+            return json([
+                'resultCode'=>1,
+                'user_id'=>$id
+            ]);
+        }else{
+            return json([
+                'resultCode'=>1,
+                'msg'=>'not found'
+            ]);
+        }
+    }
+  
+    //邮件通知聊天新消息
+    public function informChat(){
+
+        $res = $requset->post();
+        $toid = $res['toid'];
+
+        $userModel = new model\UserBaseInfo;
+        $email = $userModel->getEmailById($toid);
+        //生成web聊天地址
+        $user_id = Session::get('user_id');
+        $chat = 'http://47.107.76.178/jiaoyi/public/index.php/index/chat/chat?fromid='.$toid.'&toid='.$user_id;
+
+        Mailer::chatNoticfication($email,$chat); //发邮箱
+
+    }
 
 
 

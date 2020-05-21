@@ -14,7 +14,7 @@ class Token {
         //redis缓存
         $redis = new Redis();
         $redis->set('token'.$user_id, $token);
-        $redis -> setTimeout('token'.$user_id,300);
+        // $redis -> setTimeout('token'.$user_id,300);
 
         return $token;
     }

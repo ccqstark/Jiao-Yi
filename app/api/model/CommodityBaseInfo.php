@@ -18,13 +18,15 @@ class CommodityBaseInfo extends Model{
                 'commodity_author_id'=> $author_id,
                 'commodity_title'    => $title,
                 'commodity_price'    => $price,
-                'commodity_location' => $location
+                'commodity_location' => $location,
+                'commodity_image'  => '0'
             ]);
         $result2 = $db2->insert([
             'commodity_description' => $description,
             'contact'               => $contact,
             'like'                  => 0
         ]);
+        Session::set('new_commodity',$result1);
         //FIXME:新发布更新expand表
         $userExpand =  Db::table('user_expand')->where(['user_id'=>$author_id])->find();
         $commod_list = $userExpand['my_commodity'];    
@@ -125,6 +127,16 @@ class CommodityBaseInfo extends Model{
         return $result1+$result2;
     }
 
+
+    //上传图片    
+    public function uploadImage($commodity_id,$path){
+
+        $db = Db::table('user_base_info');
+        $result = $db->where(['commodity_id'=>$commodity_id])
+                     ->update(['commodity_image'=>$path]);
+
+        return $result;
+    }
 
     
 
